@@ -1,0 +1,73 @@
+# @package _global_
+# MIM (Masked Image Modeling) task configuration
+
+task_name: mim
+
+wandb: true
+seed: 42
+
+# Mode: train, eval, eval_recon
+mode: train
+
+# Data settings
+data:
+  dataset: in100 # Dataset: mnist, cifar10, stl10, in100, in1k
+  img_size: 256 # Input image size
+
+# Training settings (override defaults)
+training:
+  epochs: 300
+  batch_size: 64
+  lr: 1e-4
+  lr_decay: false
+  beta1: 0.9
+  beta2: 0.96
+  weight_decay: 0.1
+  dropout: 0.1
+  eval_interval: 20 # Save checkpoint every N epochs
+  num_workers: 8
+  warm_up: 0 # LR warm-up epochs
+  grad_cum: 1 # Gradient accumulation steps
+  log_iter: 200 # Log images every N iterations
+  grad_clip: 3.0 # Gradient clipping max norm
+
+# Model architecture for MIM
+model:
+  type: hyper-set # Model type: hyper-set, transformer
+  n_layer: 1 # Number of transformer layers
+  n_recur: 12 # Number of recurrence steps
+  n_head: 12 # Number of attention heads
+  n_embd: 768 # Hidden dimension
+  multiplier: 1 # MLP expansion factor
+  phi_func: null # Activation phi for linear attention and gated feedforward (null = default). Support sigmoid | relu | tanh | softplu | silu | gelu | elu | elup1
+  mask_value: 1024 # Token value used for masking (codebook_size = mask token)
+  uncond: true # Unconditional generation (no class labels)
+
+# VQGAN settings
+vqgan:
+  folder: mim/pretrained_maskgit/VQGAN/ # Folder containing VQGAN checkpoint and config
+
+# Sampling / inference settings
+sampling:
+  step: 12 # Number of decoding steps
+  sched_mode: arccos # Scheduler mode: root, linear, square, cosine, arccos
+  sm_temp: 1.0 # Softmax temperature
+  r_temp: 4.5 # Gumbel noise temperature
+  cfg_w: 0.0 # Classifier-free guidance weight
+  drop_label: 0.0 # Drop rate for CFG conditioning
+
+# Evaluation settings
+evaluation:
+  masked_ratio: 0.4 # Masking ratio for reconstruction evaluation
+  num_eval_images: 50000 # Number of images for FID evaluation
+
+# Experiment tracking
+experiment:
+  comment: mim_default
+  ckpt_name: mim_ckpt
+  ckpt_path: null # Path to resume from (folder or .pth file)
+
+# Hydra configuration (override base)
+hydra:
+  run:
+    dir: outputs/${task_name}/${model.type}/layer${model.n_layer}/recur${model.n_recur}/dim${model.n_embd}/multiplier${model.multiplier}/seed${seed}/${now:%Y-%m-%d-%H-%M-%S}

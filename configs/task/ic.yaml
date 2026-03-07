@@ -1,0 +1,77 @@
+# @package _global_
+# Image Classification (IC) task configuration.
+
+task_name: ic
+
+wandb: true
+seed: 42
+
+# Execution mode: train | eval
+mode: train
+
+# ── Data ──────────────────────────────────────────────────────────────────────
+data:
+  dataset: c10 # c10 | c100 | svhn | in100 | in1k
+  autoaugment: true # Apply AutoAugment policy
+  rcpaste: false # Apply RandomCropPaste augmentation
+  cutmix: false # Apply CutMix during training
+  mixup: false # Apply MixUp during training
+  data_root: ./data # Root directory for datasets
+  size: null
+  num_classes: null
+  in_c: null
+
+# ── Training ─────────────────────────────────────────────────────────────────
+training:
+  epochs: 200
+  batch_size: 128
+  eval_batch_size: 1024
+  lr: 1e-3
+  min_lr: 1e-5
+  beta1: 0.9
+  beta2: 0.999
+  lr_decay: true
+  weight_decay: 5e-5
+  warmup_epoch: 5
+  criterion: ce
+  label_smoothing: true
+  smoothing: 0.1
+  amp: true # Mixed-precision (AMP)
+  grad_clip: 0.0 # Gradient clipping max norm (0 = disabled)
+  num_workers: 8
+
+# ── Model ─────────────────────────────────────────────────────────────────────
+model:
+  type: hyper-set # See top-of-file for valid values
+  patch: 16 # Patch size
+  n_layer: 1 # Number of transformer layers
+  n_recur: 12 # Number of recurrent blocks;
+  n_head: 8 # Number of attention heads
+  n_embd: 512 # Hidden / embedding dimension
+  mlp_hidden: 512 # MLP hidden dimension; set equal to n_embd for multiplier=1
+  dropout: 0.0 # Dropout rate
+  use_cls_token: true # Use [CLS] token
+  input_cond: false # Condition on input representation
+  time_emb: 512 # Time embedding dimension
+  # hyper-set / hyper-set-base / hyper-set-lora specific
+  lora_r: 4 # LoRA rank
+  lora_alpha: 8 # LoRA alpha
+  # hyper-set-alt-attn specific
+  # Default: bisoftmax
+  # Sigmoid attention: sigma (Sigmoid) | sigma_square
+  # Linear attention (Phi): sigmoid | relu | tanh | softplus | silu | gelu | elu | elup1
+  attention: bisoftmax
+  # hyper-set-alt-ff specific
+  # Default: relu
+  # Softmax ff: softmax
+  # Gated ff (Phi): sigmoid | relu | tanh | softplus | silu | gelu | elu | elup1
+  ff: relu
+  # hyper-set-ss specific
+  step_size: 1.0 # Fixed step-size value
+
+# ── Experiment ────────────────────────────────────────────────────────────────
+experiment:
+  comment: ic_default
+  ckpt_name: ic_ckpt
+  finetune: false # Whether to fine-tune from a pretrained checkpoint
+  ckpt_path: null # Resume from checkpoint directory or .pth file

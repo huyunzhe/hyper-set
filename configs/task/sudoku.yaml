@@ -1,0 +1,49 @@
+# @package _global_
+# Sudoku-specific configuration
+
+task_name: sudoku
+
+wandb: true
+
+# Mode
+mode: train # Mode: train, eval, vis
+
+# Data settings
+data:
+  dataset: palm # Dataset: satnet, palm, 70k
+  n_train: 9000 # Number of training samples
+  n_test: 1000 # Number of test samples
+  label_size: 16 # Number of labeled samples per batch (for semi-supervised learning)
+
+# Training settings (override defaults)
+training:
+  epochs: 200
+  lr: 1e-4
+  lr_decay: true
+  weight_decay: 0.1
+  beta1: 0.9
+  beta2: 0.95
+  eval_interval: 1
+  num_workers: 8
+
+# Model architecture for Sudoku
+model:
+  type: hyper-set # Model type: hyper-set, transformer, crate, et
+  n_layer: 1 # Number of transformer layers
+  n_recur: 24 # Number of recurrent iterations
+  n_head: 12 # Number of attention heads
+  n_embd: 768 # Embedding dimension
+  multiplier: 4 # MLP expansion ratio
+  time_emb: 512 # Time embedding dimension
+  vocab_size: 10 # Vocabulary size (digits 0-9)
+  block_size: 81 # Sequence length (9x9 Sudoku grid)
+  num_classes: 9 # Number of output classes (digits 1-9)
+  phi_func: null # Activation phi for linear attention and gated feedforward (null = default). Support sigmoid | relu | tanh | softplu | silu | gelu | elu | elup1
+  pos_emb: learnable
+  input_cond: true
+
+# Experiment tracking
+experiment:
+  comment: sudoku_default # Comment
+  ckpt_name: sudoku_ckpt # Checkpoint name
+  ckpt_path: null # Path to resume from (folder or .pth file)

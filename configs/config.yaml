@@ -1,0 +1,67 @@
+# Base configuration for Hyper-SET.
+# Settings defined here apply to all tasks; task-specific overrides live in
+# configs/task/<task_name>.yaml.  Every key can be further overridden from the
+# command line, e.g.:  python main.py training.epochs=500 model.n_recur=24
+
+defaults:
+  - _self_
+  - task: sudoku # Default task to run (override with task=ic or task=mim)
+
+# ── General ───────────────────────────────────────────────────────────────────
+seed: 0 # Random seed for reproducibility
+debug: false # Debug mode (extra logging, smaller datasets)
+wandb: false # Enable Weights & Biases logging
+run_dir: null # Populated automatically by setup_wandb()
+
+# ── Dataset paths (ImageNet only) ─────────────────────────────────────────────
+# Small datasets (CIFAR-10/100, SVHN) are downloaded automatically.
+# ImageNet datasets must be downloaded manually and the paths set below.
+data:
+  in100_path: "/mnt/dongxu-fs2/data-ssd/yzhu/imagenet_100" # Path to ImageNet-100 dataset root
+  in1k_path: "/mnt/dongxu-fs2/data-ssd/yzhu/imagenet_data" # Path to ImageNet-1k dataset root
+
+# ── Training defaults (overridden by task configs) ────────────────────────────
+training:
+  epochs: 200 # Number of training epochs
+  batch_size: 16 # Per-GPU batch size
+  lr: 6e-4 # Peak learning rate
+  lr_decay: true # Enable cosine LR decay
+  weight_decay: 0.01 # AdamW weight decay
+  dropout: 0.0 # Dropout rate
+  eval_interval: 1 # Evaluate every N epochs
+  num_workers: 8 # DataLoader worker processes
+
+# ── Model defaults (overridden by task configs) ───────────────────────────────
+model:
+  type: hyper-set # Model type: hyper-set | transformer | crate | crate-T | et
+  n_layer: 1 # Number of distinct transformer layer *parameters*
+  n_recur: 24 # Number of recurrent iterations per layer
+  n_head: 4 # Number of attention heads
+  n_embd: 128 # Token embedding dimension
+  multiplier: 1 # MLP hidden-dim expansion factor
+  time_emb: 512 # Sinusoidal recurrence-index embedding dimension
+  adaptive_mode: gd_with_learnable_step_size
+  # Supported adaptive_mode values:
+  #   gd_with_learnable_step_size          – gradient descent, learned α/β
+  #   gd_momentum_with_learnable_step_size – gradient descent + momentum, learned α/β
+  #   rmsprop_with_fix_step_size           – RMSProp with fixed step size
+  #   rmsprop_momentum_with_fix_step_size  – RMSProp + momentum, fixed step
+  #   adam_with_fix_step_size              – Adam-style, fixed step
+  pos_emb: learnable # Positional embedding type: learnable | sincos
+  input_cond: false # Condition step sizes on the input (rather than current state)
+
+# ── Experiment tracking ───────────────────────────────────────────────────────
+experiment:
+  comment: "" # Free-text experiment comment (logged to W&B)
+  ckpt_name: "" # Checkpoint filename stem (no extension)
+  ckpt_path: null # Path to resume from (folder or .pth file)
+
+# Hydra configuration
+hydra:
+  run:
+    dir: outputs/${task_name}/${model.type}/layer${model.n_layer}/recur${model.n_recur}/dim${model.n_embd}/seed${seed}/${now:%Y-%m-%d_%H-%M-%S}
+  sweep:
+    dir: multirun/${task_name}/${model.type}/layer${model.n_layer}/recur${model.n_recur}/dim${model.n_embd}/seed${seed}/${now:%Y-%m-%d_%H-%M-%S}
+    subdir: ${hydra.job.num}
+  job:
+    chdir: false # Don't change working directory
