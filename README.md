@@ -13,12 +13,11 @@
 
 <div align="center" style="font-family: charter; max-width: 1000px; margin: 0 auto;">
     <blockquote style="border-left: 4px solid #ccc; padding: 15px 20px; background-color: #f9f9f9; font-style: italic;">
-        <h3 style="margin: 0; white-space: nowrap; font-size: 1.15em;">
+        <h3 style="margin: 0; white-space: nowrap; overflow-x: auto; font-size: 1.15em;">
             Can we find or design a function prior that induces a model interpretable by construction?
         </h3>
     </blockquote>
 </div>
-
 
 We think the answer is yes, at least for a family of Transformers. We provide a principled framework for viewing and designing Transformers through the lens of **hyperspherical energy minimization**. A family of self-attention and feedforward layers with structural bias, RMSNorm, and skip connections all emerge from the fundamental objective: **maximum likelihood**. The result is a compact, interpretable, and competitive Transformer—designed top-down, not engineered bottom-up.
 
