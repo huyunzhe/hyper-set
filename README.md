@@ -3,6 +3,7 @@
 </div>
 
 <p align="center">
+  <a href="https://hyper-set.github.io/"><img src="https://img.shields.io/badge/🌐%20Project-Page-success.svg" alt="Project Page"></a>
   <a href="https://arxiv.org/abs/2502.11646"><img src="https://img.shields.io/badge/arXiv-2502.11646-b31b1b.svg" alt="arXiv"></a>
   <a href="https://openreview.net/forum?id=FinhjyDgYA"><img src="https://img.shields.io/badge/OpenReview-ICLR%202026-blue.svg" alt="OpenReview"></a>
   <a href="https://huggingface.co/Yunzhe/Hyper-SET/tree/main"><img src="https://img.shields.io/badge/🤗%20Models-Hugging%20Face-yellow.svg" alt="Models"></a>
