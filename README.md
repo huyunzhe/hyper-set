@@ -11,9 +11,9 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="MIT License"></a>
 </p>
 
-<div align="center" style="font-family: charter; max-width: 800px; margin: 0 auto;">
-    <blockquote style="border-left: 4px solid #ccc; padding: 10px 20px; background-color: #f9f9f9; font-style: italic;">
-        <h3 style="margin: 0;">
+<div align="center" style="font-family: charter; max-width: 1000px; margin: 0 auto;">
+    <blockquote style="border-left: 4px solid #ccc; padding: 15px 20px; background-color: #f9f9f9; font-style: italic;">
+        <h3 style="margin: 0; white-space: nowrap; font-size: 1.15em;">
             Can we find or design a function prior that induces a model interpretable by construction?
         </h3>
     </blockquote>
